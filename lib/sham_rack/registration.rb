@@ -8,6 +8,20 @@ module ShamRack
       registry.clear
     end
 
+    def splat_at(address, port =nil, &app_block)
+      # You want to make it work for this and any subdomains
+      mount_point = mount_point_for(address, port)
+
+      if app_block
+        mount_point.mount(app_block)
+      else
+        mount_point
+      end
+
+      wildcard_registry[/^.*\.#{address}$/] = mount_point
+      mount_point
+    end
+
     def at(address, port = nil, &app_block)
       mount_point = mount_point_for(address, port)
       if app_block
@@ -28,7 +42,29 @@ module ShamRack
     private
 
     def mount_point_for(address, port)
-      registry[mount_key(address, port)]
+      mount_point = registry[mount_key(address, port)]
+
+      if (!mount_point)
+        # Look and see if it can be subdomain matched
+        match = nil
+
+        wildcard_registry.each_pair do |regex, mount_point|
+          if ( regex.match(address) )
+            match = mount_point
+          end
+        end
+
+        # Cache it for next time
+        if (match)
+          registry[mount_key(address, port)] = match
+        end
+        mount_point
+      end
+    end
+
+
+    def wildcard_registry
+      @wildcard_registry ||= {}
     end
 
     def registry
