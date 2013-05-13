@@ -59,6 +59,8 @@ module ShamRack
           registry[mount_key(address, port)] = match
         end
         mount_point
+      else
+        mount_point
       end
     end
 
