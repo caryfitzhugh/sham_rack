@@ -19,7 +19,8 @@ module ShamRack
         mount_point
       end
 
-      wildcard_registry[/^.*\.#{address}$/] = mount_point
+      wildcard_registry[/^(.+\.)?#{address}$/] = mount_point
+
       mount_point
     end
 
