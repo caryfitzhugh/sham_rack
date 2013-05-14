@@ -1,3 +1,4 @@
+
 module ShamRack
 
   module Registration
@@ -58,10 +59,10 @@ module ShamRack
         if (match)
           registry[mount_key(address, port)] = match
         end
-        mount_point
-      else
-        mount_point
       end
+
+      # Now grab it and return
+      registry[mount_key(address,port)] ||= MountPoint.new
     end
 
 
@@ -70,9 +71,7 @@ module ShamRack
     end
 
     def registry
-      @registry ||= Hash.new do |hash, key|
-        hash[key] = MountPoint.new
-      end
+      @registry ||= Hash.new
     end
 
     def mount_key(address, port)
