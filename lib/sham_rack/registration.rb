@@ -7,6 +7,7 @@ module ShamRack
 
     def unmount_all
       registry.clear
+      wildcard_registry.clear
     end
 
     def splat_at(address, port =nil, &app_block)
